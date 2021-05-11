@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addNewTransaction;
@@ -11,17 +12,44 @@ class NewTransaction extends StatefulWidget {
 
 class _NewTransactionState extends State<NewTransaction> {
   final titleController = TextEditingController();
-
   final amountController = TextEditingController();
+  DateTime selectedDate;
 
   void submitData() {
     final enteredTitle = titleController.text;
     final enteredAmount = double.parse(amountController.text);
     if (enteredAmount > 0 && enteredTitle != null) {
-      widget.addNewTransaction(enteredTitle, enteredAmount);
+      widget.addNewTransaction(
+        enteredTitle,
+        enteredAmount,
+        selectedDate,
+      );
+    }
+    if (selectedDate == null) {
+      final snackbar = new SnackBar(content: Text('Choose a date'));
+      // ignore: deprecated_member_use
+      Scaffold.of(context).showSnackBar(snackbar);
     }
 
     Navigator.of(context).pop();
+  }
+
+  void openDatePicker() {
+    showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2020),
+            lastDate: DateTime.now())
+        .then((value) {
+      if (value == null) {
+        return null;
+      } else {
+        setState(() {
+          selectedDate = value;
+        });
+      }
+      return selectedDate;
+    });
   }
 
   @override
@@ -59,16 +87,28 @@ class _NewTransactionState extends State<NewTransaction> {
                   onSubmitted: (_) => submitData(),
                 ),
               ),
+              Row(
+                children: [
+                  Text((selectedDate == null)
+                      ? 'No Date Chose'
+                      : DateFormat.yMMMd().format(selectedDate)),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  TextButton(
+                      onPressed: openDatePicker, child: Text('Chose Date'))
+                ],
+              ),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 10),
-                child: TextButton(
+                child: ElevatedButton(
                   onPressed: submitData,
                   child: Text(
                     'Add Transaction',
-                    style: TextStyle(color: Theme.of(context).primaryColorDark),
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

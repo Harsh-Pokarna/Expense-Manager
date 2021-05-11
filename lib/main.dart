@@ -1,3 +1,5 @@
+import './widgets/chart.dart';
+
 import './widgets/transaction_list.dart';
 
 import './widgets/new_transaction.dart';
@@ -39,13 +41,19 @@ class _MyHomePageState extends State<MyHomePage> {
     // Transaction(
     //     id: '3dafdfa', title: 'Mouse', amount: 90000, date: DateTime.now()),
   ];
+  List<Transaction> get _recentTransaction {
+    return _userTransactions.where((element) {
+      return element.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
+  }
 
-  void _addUserTransaction(String txTitle, double txAmount) {
+  void _addUserTransaction(
+      String txTitle, double txAmount, DateTime choseDate) {
     final newTx = Transaction(
         id: DateTime.now().toString(),
         title: txTitle,
         amount: txAmount,
-        date: DateTime.now());
+        date: choseDate);
 
     setState(() {
       _userTransactions.add(newTx);
@@ -59,6 +67,14 @@ class _MyHomePageState extends State<MyHomePage> {
         return NewTransaction(_addUserTransaction);
       },
     );
+  }
+
+  void deleteTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((element) {
+        return element.id == id;
+      });
+    });
   }
 
   @override
@@ -78,9 +94,18 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         ],
       ),
-      body: ListView(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TransactionList(_userTransactions),
+          Chart(_recentTransaction),
+          Container(
+            height: 600,
+            child: ListView(
+              children: [
+                TransactionList(_userTransactions, deleteTransaction),
+              ],
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
