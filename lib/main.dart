@@ -62,6 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void openBottomSheet(BuildContext context) {
     showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       builder: (_) {
         return NewTransaction(_addUserTransaction);
@@ -94,19 +95,14 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Chart(_recentTransaction),
-          Container(
-            height: 600,
-            child: ListView(
-              children: [
-                TransactionList(_userTransactions, deleteTransaction),
-              ],
-            ),
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Chart(_recentTransaction),
+            TransactionList(_userTransactions, deleteTransaction),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),

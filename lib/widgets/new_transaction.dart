@@ -58,13 +58,15 @@ class _NewTransactionState extends State<NewTransaction> {
       child: Card(
         elevation: 3,
         child: Container(
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Container(
                 margin: EdgeInsets.all(6),
                 child: TextField(
+                  autofocus: true,
                   // onChanged: (title) {
                   //   titleInput = title;
                   // },
